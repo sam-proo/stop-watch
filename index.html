@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <style>
+        .timer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-family: sans-serif;
+            font-size: 16px;
+        }
+
+        .display {
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #startBtn {
+            background-color: #388e3c;
+            color: white;
+        }
+
+        #stopBtn {
+            background-color: #e3342b;
+            color: white;
+        }
+
+        #resetBtn {
+            background-color: #17a2b8;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="timer">
+        <div class="display" id="display">00:00:00.000</div>
+        <button id="startBtn">Start</button>
+        <button id="stopBtn">Stop</button>
+        <button id="resetBtn">Reset</button>
+    </div>
+
+    <script>
+        let startTime;
+        let elapsedTime = 0;
+        let intervalId;
+        let isRunning = false;
+
+        function updateTimer() {
+            if (isRunning) {
+                elapsedTime = Date.now() - startTime;
+
+                // Convert milliseconds to hours, minutes, seconds, and milliseconds
+                const hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);
+                const seconds = Math.floor((elapsedTime / 1000) % 60);
+                const milliseconds = Math.floor(elapsedTime % 1000);
+
+                // Format the time string
+                const displayTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(3, '0')}`;
+
+                document.getElementById('display').textContent = displayTime;
+            }
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                startTime = Date.now();
+                intervalId = setInterval(updateTimer, 1);
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                document.getElementById('resetBtn').disabled = true;
+            }
+        }
+
+        function stopTimer() {
+            if (isRunning) {
+                isRunning = false;
+                clearInterval(intervalId);
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+                document.getElementById('resetBtn').disabled = false;
+            }
+        }
+
+        function resetTimer() {
+            isRunning = false;
+            clearInterval(intervalId);
+            elapsedTime = 0;
+            startTime = undefined;
+            document.getElementById('display').textContent = '00:00:00.000';
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('resetBtn').disabled = true;
+        }
+
+        document.getElementById('startBtn').addEventListener('click', startTimer);
+        document.getElementById('stopBtn').addEventListener('click', stopTimer);
+        document.getElementById('resetBtn').addEventListener('click', resetTimer);
+    </script>
+</body>
+</html>
